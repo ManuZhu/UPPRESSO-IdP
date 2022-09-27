@@ -23,7 +23,7 @@ function consent(){
 	xmlhttp.onreadystatechange = function () {
 		onReceiveAuthResponse(xmlhttp)
 	}
-	let url = IdPOrigin + '/authorize?client_id=' + PID_RP + '&redirect_uri=' + redirect_uri + '&response_type=token&scope=' + scope
+	let url = IdPOrigin + '/authorize?client_id=' + PID_RP + '&redirect_uri=' + "http://redirect.com" + '&response_type=code&scope=' + scope
 	xmlhttp.open("Get", url, true);
 	xmlhttp.send();
 }
@@ -75,7 +75,7 @@ function onReceiveAuthResponse(xmlhttp){
             if (response.includes("html")){
             	document.getElementById("login").style = ""
             } else {
-            	let postMessageToken = {"Type": "token", "Token": response}
+				let postMessageToken = {"Type": "code", "Code": response}
 				window.opener.postMessage(JSON.stringify(postMessageToken), redirect_uri);
             }
         }

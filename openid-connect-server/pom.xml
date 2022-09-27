@@ -40,6 +40,11 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>org.fisco.bcos.groupsig</groupId>
+			<artifactId>group-signature-client</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mitre</groupId>
 			<artifactId>openid-connect-common</artifactId>
 		</dependency>

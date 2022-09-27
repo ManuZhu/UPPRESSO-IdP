@@ -91,12 +91,16 @@ public class JWTBearerAuthenticationProvider implements AuthenticationProvider {
 			JWT jwt = jwtAuth.getJwt();
 			JWTClaimsSet jwtClaims = jwt.getJWTClaimsSet();
 
-			if (!(jwt instanceof SignedJWT)) {
+			/**
+			 * modified by Zhu Wentian
+			 * **/
+
+			/*if (!(jwt instanceof SignedJWT)) {
 				throw new AuthenticationServiceException("Unsupported JWT type: " + jwt.getClass().getName());
-			}
+			}*/
 
 			// check the signature with nimbus
-			SignedJWT jws = (SignedJWT) jwt;
+			/*SignedJWT jws = (SignedJWT) jwt;
 
 			JWSAlgorithm alg = jws.getHeader().getAlgorithm();
 
@@ -145,7 +149,7 @@ public class JWTBearerAuthenticationProvider implements AuthenticationProvider {
 				}
 			} else {
 				throw new AuthenticationServiceException("Unable to create signature validator for method " + client.getTokenEndpointAuthMethod() + " and algorithm " + alg);
-			}
+			}*/
 
 			// check the issuer
 			if (jwtClaims.getIssuer() == null) {

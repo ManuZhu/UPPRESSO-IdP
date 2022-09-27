@@ -28,6 +28,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
+import com.nimbusds.jose.JOSEObject;
+import com.nimbusds.jose.util.Base64URL;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -42,6 +45,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import com.google.common.base.Strings;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
+
+import org.fisco.bcos.groupsig.app.*;
 
 /**
  * Filter to check client authentication via JWT Bearer assertions.
@@ -92,14 +97,35 @@ public class JWTBearerClientAssertionTokenEndpointFilter extends AbstractAuthent
 		String assertion = request.getParameter("client_assertion");
 
 		try {
+			/**
+			 * modified by Zhu Wentian
+			 * **/
+			String[] parts = assertion.split("\\.", 3);
+			assertion = parts[0] + "." + parts[1] + ".";
+			String sig = parts[2];
+
+			String url = "http://202.38.78.57:8005";
+			RequestSigService sigServiceRequestor = new RequestSigService(url);
+			try {
+				String ret = sigServiceRequestor.groupVerify("group1", sig, assertion);
+				JSONObject sigVerifyResponse = JSONObject.parseObject(ret);
+				JSONObject sigVerifyResult   = sigVerifyResponse.getJSONObject("result");
+				if(sigVerifyResult.getIntValue("ret_code")!=0 ||
+					!sigVerifyResult.getBooleanValue("result")){
+					throw new Exception();
+				}
+			} catch (Exception e) {
+				throw new Exception();
+			}
+
 			JWT jwt = JWTParser.parse(assertion);
 
-			String clientId = jwt.getJWTClaimsSet().getSubject();
+			//String clientId = jwt.getJWTClaimsSet().getSubject();
 
 			Authentication authRequest = new JWTBearerAssertionAuthenticationToken(jwt);
 
 			return this.getAuthenticationManager().authenticate(authRequest);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			throw new BadCredentialsException("Invalid JWT credential: " + assertion);
 		}
 	}

@@ -173,8 +173,13 @@ public class AuthorizationEndpoint extends AbstractEndpoint {
 					return getImplicitGrantResponse(authorizationRequest);
 				}
 				if (responseTypes.contains("code")) {
-					return new ModelAndView(getAuthorizationCodeResponse(authorizationRequest,
-							(Authentication) principal));
+					/**
+					 * modified by Zhu Wentian
+					 * **/
+					ModelAndView mv = new ModelAndView();
+					Object value = generateCode(authorizationRequest, (Authentication) principal);
+					mv.addObject("token", value);
+					return mv;
 				}
 			}
 
